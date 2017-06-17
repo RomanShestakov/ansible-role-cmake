@@ -27,7 +27,7 @@
 
 - name: add to /usr/local/bin
   sudo: True
-  file: state=link mode=0755 dest={{cmake_dest_dir}}/bin/cmake src="/usr/local/bin/cmake"
+  file: state=link mode=0755 src={{ cmake_install_dir }}/bin/cmake dest="/usr/local/bin/cmake"
   when: opt_kitware.stat.exists == False
 
 - name: Add CMake to the PATH
