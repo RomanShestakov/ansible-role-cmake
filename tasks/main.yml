@@ -6,7 +6,7 @@
   register: opt_kitware
 
 - name: Ensure installation directory
-  sudo: True
+  become: true
   file: state=directory mode=0755 dest={{cmake_dest_dir}}
   when: opt_kitware.stat.exists == False
 
@@ -21,19 +21,18 @@
   when: bin_cmake.stat.exists == False
 
 - name: Install CMake
+  become: true
   unarchive: copy=no src={{cmake_temp}} dest={{cmake_dest_dir}}
-  sudo: True
   when: (bin_cmake.stat.exists == False) and  (cmake_downloaded | success)
 
 - name: add to /usr/local/bin
-  sudo: True
+  become: true
   file: state=link mode=0755 src={{ cmake_install_dir }}/bin/cmake dest="/usr/bin/cmake"
   when: opt_kitware.stat.exists == False
 
 - name: Add CMake to the PATH
-  sudo: no
-  lineinfile:
-    dest: "{{ cmake_rcfile }}"
-    line: export PATH={{ cmake_install_dir }}/bin:$PATH
-    state: present
+  become: true
+  action: template src=cmake.sh-template.j2
+          dest="/etc/profile.d/cmake.sh"
+          mode=0644
   when: cmake_modify_path
