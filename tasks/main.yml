@@ -23,7 +23,7 @@
 - name: Install CMake
   become: true
   unarchive: copy=no src={{cmake_temp}} dest={{cmake_dest_dir}}
-  when: (bin_cmake.stat.exists == False) and  (cmake_downloaded | success)
+  when: bin_cmake.stat.exists == False
 
 - name: add to /usr/local/bin
   become: true
