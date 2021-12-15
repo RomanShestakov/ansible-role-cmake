@@ -1,0 +1,36 @@
+---
+
+- name: CMAKE | Get sources
+  become: true
+  get_url: url={{cmake_url}} dest={{cmake_tmp}} timeout=180 force=no
+  register: cmake_downloaded
+
+- name: CMAKE | Extract sources
+  become: true
+  unarchive: src={{cmake_tmp}}
+             dest="/tmp"
+             creates={{cmake_build}}
+             remote_src=yes
+  when: cmake_downloaded.changed
+  register: cmake_extract
+
+- name: CMAKE | Bootsrap
+  become: true
+  shell: chdir={{cmake_build}} ./bootstrap \
+    --prefix={{cmake_install_dir}} \
+  when: cmake_extract.changed
+  register: cmake_configure
+
+- name: CMAKE | Make
+  become: true
+  shell: chdir={{cmake_build}} make
+  when: cmake_configure.changed
+  register: cmake_make
+
+- name: CMAKE | Install
+  become: true
+  shell: chdir={{cmake_build}} make install
+  when: cmake_make.changed
+  register: cmake_install
+
+...

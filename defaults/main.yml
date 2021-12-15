@@ -1,0 +1,7 @@
+# file: meta/main.yml
+
+cmake_version: 3.22.1
+cmake_url: "https://github.com/Kitware/CMake/releases/download/v{{cmake_version}}/cmake-{{cmake_version}}.tar.gz"
+cmake_tmp: "/tmp/cmake-{{cmake_version}}.tar.gz"
+cmake_build: "/tmp/cmake-{{cmake_version}}"
+cmake_install_dir: "/opt/cmake-{{cmake_version}}"
