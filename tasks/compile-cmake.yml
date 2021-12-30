@@ -54,7 +54,7 @@
 - name: CMAKE | cleanup build
   become: true
   file:
-    path: "{{ cmake_build_dir }}"
+    path: "{{ cmake_build }}"
     state: absent
   when: cmake_install.changed
 
