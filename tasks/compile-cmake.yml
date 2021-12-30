@@ -1,14 +1,14 @@
 ---
 
-- name: CMAKE | check if source archive exists
-  command: /usr/bin/test -e {{cmake_tmp}}
-  ignore_errors: True
-  register: cmake_arch_exists
+- name: CMAKE | check if install exists
+  stat:
+    path: "{{ cmake_install_dir }}"
+  register: cmake_exists
 
 - name: CMAKE | Get sources
   become: true
   get_url: url={{cmake_url}} dest={{cmake_tmp}} timeout=180 force=no
-  when: cmake_arch_exists.rc != 0
+  when: not cmake_exists.stat.exists
   register: cmake_downloaded
 
 - name: CMAKE | Extract sources
@@ -44,11 +44,25 @@
   file: state=link mode=0755 src={{ cmake_install_dir }}/bin/cmake dest="/usr/bin/cmake"
   when: cmake_install.changed
 
- - name: CMAKE | Add CMake to the PATH
+- name: CMAKE | Add CMake to the PATH
   become: true
   action: template src=cmake.sh-template.j2
           dest="/etc/profile.d/cmake.sh"
           mode=0644
+  when: cmake_install.changed
+
+- name: CMAKE | cleanup build
+  become: true
+  file:
+    path: "{{ cmake_build_dir }}"
+    state: absent
+  when: cmake_install.changed
+
+- name: CMAKE | cleanup tmp
+  become: true
+  file:
+    path: "{{ cmake_tmp }}"
+    state: absent
   when: cmake_install.changed
 
 ...
