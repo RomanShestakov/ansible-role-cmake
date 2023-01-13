@@ -39,17 +39,17 @@
   when: cmake_make.changed
   register: cmake_install
 
-# - name: CMAKE | add to /usr/local/bin
-#   become: true
-#   file: state=link mode=0755 src={{ cmake_install_dir }}/bin/cmake dest="/usr/bin/cmake"
-#   when: cmake_install.changed
+- name: CMAKE | add to /usr/local/bin
+  become: true
+  file: state=link mode=0755 src={{ cmake_install_dir }}/bin/cmake dest="/usr/bin/cmake"
+  when: cmake_install.changed
 
-# - name: CMAKE | Add CMake to the PATH
-#   become: true
-#   action: template src=cmake.sh-template.j2
-#           dest="/etc/profile.d/cmake.sh"
-#           mode=0644
-#   when: cmake_install.changed
+- name: CMAKE | Add CMake to the PATH
+  become: true
+  action: template src=cmake.sh-template.j2
+          dest="/etc/profile.d/cmake.sh"
+          mode=0644
+  when: cmake_install.changed
 
 - name: CMAKE | cleanup build
   become: true
